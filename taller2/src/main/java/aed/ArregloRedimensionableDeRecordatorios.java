@@ -23,24 +23,32 @@ class ArregloRedimensionableDeRecordatorios {
     }
 
     public Recordatorio obtener(int i) {
-        // Implementar
-        return null;
+        return recordatoriosVector[i];
     }
 
     public void quitarAtras() {
-        // Implementar
+        Recordatorio[] nuevoVector = new Recordatorio[this.longitud() - 1];
+
+        for (int j = 0; j < this.longitud() - 1; j++){
+            nuevoVector[j] = recordatoriosVector[j];
+        }
+
+        recordatoriosVector = nuevoVector;
     }
 
     public void modificarPosicion(int indice, Recordatorio valor) {
-        // Implementar
+        recordatoriosVector[indice] = valor;
     }
 
     public ArregloRedimensionableDeRecordatorios(ArregloRedimensionableDeRecordatorios vector) {
-        // Implementar
+        this.recordatoriosVector = new Recordatorio[vector.longitud()];
+
+        for (int j = 0; j < vector.longitud(); j ++){
+            this.recordatoriosVector[j] = new Recordatorio(vector.obtener(j));
+        }
     }
 
     public ArregloRedimensionableDeRecordatorios copiar() {
-        // Implementar
-        return null;
+        return new ArregloRedimensionableDeRecordatorios(this);
     }
 }

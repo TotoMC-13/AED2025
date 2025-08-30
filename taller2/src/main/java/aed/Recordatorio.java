@@ -41,7 +41,16 @@ public class Recordatorio {
 
         Recordatorio otroRecordatorio = (Recordatorio) otro;
 
-        return fecha == otroRecordatorio.fecha && horario == otroRecordatorio.horario && mensaje == otroRecordatorio.mensaje;
+        return this.fecha.equals(otroRecordatorio.fecha) &&
+               this.horario.equals(otroRecordatorio.horario) &&
+               this.mensaje.equals(otroRecordatorio.mensaje);
     }
+
+        public Recordatorio(Recordatorio recordatorio) {
+            this.fecha = new Fecha(recordatorio.fecha);
+            this.horario = recordatorio.horario;
+            this.mensaje = recordatorio.mensaje;
+    }
+
 
 }
