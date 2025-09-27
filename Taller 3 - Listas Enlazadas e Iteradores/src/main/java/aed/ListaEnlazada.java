@@ -66,7 +66,7 @@ public class ListaEnlazada<T> {
             return null;
         }
 
-        while (it.haySiguiente() && j < i) {
+        while (it.haySiguiente() && j < i + 1) {
             res = it.siguiente();
             j++;
         }
@@ -129,44 +129,73 @@ public class ListaEnlazada<T> {
 
     // Esto es el constructor por copia
     public ListaEnlazada(ListaEnlazada<T> lista) { 
-        throw new UnsupportedOperationException("No implementada aun");
+        primero = null;
+        ultimo = null;
+        longitud = 0;
+        
+        ListaIterador it = lista.iterador();
+        
+        while (it.haySiguiente()) {
+            this.agregarAtras(it.siguiente());
+        }
     }
-    
+
     @Override
     public String toString() {
-        throw new UnsupportedOperationException("No implementada aun");
+        ListaIterador it = this.iterador();
+        String res = "[";
+
+        while(it.haySiguiente()) {
+            if (res == "["){
+                res += it.siguiente();
+            } else {
+                res += ", " + it.siguiente();
+            }
+        }
+
+        res += "]";
+
+        return res;
     }
 
     public class ListaIterador{
     	private Nodo actualNodo;
 
         public ListaIterador() {
-            actualNodo = primero;
+            actualNodo = null;
         }
 
         public boolean haySiguiente() {
             if (actualNodo == null) {
-                return false;
+                return primero != null;
             }
-
-	        return actualNodo.sig != null;
+            return actualNodo.sig != null;
         }
         
         public boolean hayAnterior() {
-	        return actualNodo.ant != null;
+	       return actualNodo != null;
         }
 
         public T siguiente() {
-	        T val_siguiente = actualNodo.sig.valor;
-            actualNodo = actualNodo.sig;
-            return val_siguiente;
+            if (actualNodo == null) {
+                actualNodo = primero;
+                return primero.valor;
+            }
+	        actualNodo = actualNodo.sig;
+            return actualNodo.valor;
         }
         
 
         public T anterior() {
-	        T val_anterior = actualNodo.ant.valor;
+            if (actualNodo == null) {
+                return null;
+            }
+
+            T res  = actualNodo.valor;
+
             actualNodo = actualNodo.ant;
-            return val_anterior;
+
+            return res;
         }
     }
 
