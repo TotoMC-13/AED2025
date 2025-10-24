@@ -52,7 +52,7 @@ public class ABB<T extends Comparable<T>> {
     private T recorrerDerecha(Nodo n){
         if (n.der == null) {return n.valor;}
 
-        return recorrerIzquierda(n.der);
+        return recorrerDerecha(n.der);
     }
 
     public void insertar(T elem){
