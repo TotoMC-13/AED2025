@@ -7,7 +7,6 @@ import java.util.*;
 public class ABB<T extends Comparable<T>> {
     private Nodo raiz;
     private int cardinal;
-    private int altura;
 
     private class Nodo {
         private T valor;
@@ -26,7 +25,6 @@ public class ABB<T extends Comparable<T>> {
     public ABB() {
         raiz = null;
         cardinal = 0;
-        altura = 0;
     }
 
     public int cardinal() {
@@ -81,15 +79,15 @@ public class ABB<T extends Comparable<T>> {
 
     public boolean pertenece(T elem){
         if (raiz == null) {return false;}
-        return (buscarElemento(raiz, elem).valor == elem);
+        return (buscarElemento(raiz, elem).valor.equals(elem));
     }
 
-    private boolean tieneHijos(Nodo n){
+    private boolean esHoja(Nodo n){
         return n.der == null && n.izq == null;
     }
 
     private Nodo buscarElemento(Nodo n, T elem){
-        if (tieneHijos(n) || (n.valor == elem)){
+        if (esHoja(n) || (n.valor.equals(elem))){
             return n;
         } else if (n.valor.compareTo(elem) < 0) { // Comparacion < 0 quiere decir que elem > n.valor => Vamos para la derecha
             if (n.der != null) {return buscarElemento(n.der, elem);}
@@ -112,52 +110,75 @@ public class ABB<T extends Comparable<T>> {
     }
 
     private Nodo buscarSucesor(Nodo n) {
-        if (n.der.der != null) { // Tiene subarbol a su derecha
-            return recorrerIzquierda(n.der); // Devuelvo el minimo de su subarbol derecho
-        }
+        return recorrerIzquierda(n.der);
+    }
 
-        return n.der;
+    private void cortarNodo(Nodo n) {
+        if (n == raiz) {
+            raiz = null;
+        } else {
+            int posNodo = posicionNodo(n);
+            
+            if (posNodo == 0) { // Si n es el izquierdo
+                n.padre.izq = null;
+            } else { // Si n es el derecho
+                n.padre.der = null;
+            }
+        }
+        cardinal--;
+    }
+
+    private Nodo obtenerHijoUnico(Nodo n) {
+        if (n.der == null) {
+            return n.izq;
+        } else {
+            return n.der;
+        }
     }
 
     public void eliminar(T elem){
-        if (pertenece(elem) == false) {return;} // No pertenece, no eliminamos nada (Caso 1)
+        if (!pertenece(elem)) {return;} // (Caso 1) No pertenece, no eliminamos nada
         
         Nodo n = buscarElemento(raiz, elem);
-        Nodo sucesor = null; // El nodo que tomara su lugar
 
-        if (tieneHijos(n) == false) { // n no tiene hijos, solo hay que borrarlo del padre (Caso 2)
-            if (posicionNodo(n) == 0) { // Es el izquierdo
-                n.padre.izq = sucesor;
-            } else { // Es el derecho
-                n.padre.der = sucesor;
+        if (esHoja(n)) { // (Caso 2) No tiene hijos
+            cortarNodo(n);
+        } else if (n.der == null || n.izq == null) { // (Caso 3) Tiene un hijo derecho
+            Nodo hijoUnico = obtenerHijoUnico(n);
+            
+            if (raiz == n) {
+                raiz = hijoUnico;
+            } else if (posicionNodo(n) == 0) {
+                n.padre.izq = hijoUnico;
+            } else {
+                n.padre.der = hijoUnico;
             }
-            return;
-        }
 
-        if (n.izq == null) { // Si estamos aca sabemos que tiene por lo menos un hijo, vemos si tiene solo 1 (Caso 3)
-            n.valor = n.der.valor;
-        } else if (n.der == null) {
-            n.valor = n.izq.valor;
-        } else { // Tiene dos hijos, buscamos el sucesor (Caso 4)
-            sucesor = buscarSucesor(n);
+            hijoUnico.padre = n.padre;
+
+            cardinal --;
+        } else { // (Caso 4) Tiene 2 hijos
+            Nodo sucesor = buscarSucesor(n);
+
             n.valor = sucesor.valor;
+
+            Nodo hijoSucesor = sucesor.der;
+
+            if (hijoSucesor == null) {
+                cortarNodo(sucesor);
+            } else {
+                hijoSucesor.padre = sucesor.padre;
+
+                if (sucesor.padre.izq == sucesor) {
+                    sucesor.padre.izq = hijoSucesor;
+                } else {
+                    sucesor.padre.der = hijoSucesor;
+                }
+
+                cardinal --;
+            }
         }
 
-        // Ahora saco al sucesor de donde estaba antes
-        if (posicionNodo(sucesor) == 0) { // Es el izquierdo
-            sucesor.padre.izq = null;
-        } else { // Es el derecho
-            sucesor.padre.der = null;
-        }
-
-        // Reemplazo a n por su sucesor
-        if (posicionNodo(n) == 0) { // Es el izquierdo
-            n.padre.izq.valor = sucesor.valor;
-        } else { // Es el derecho
-            n.padre.der.valor = sucesor.valor;
-        }
-
-        cardinal = cardinal - 1;
     }
 
     public String toString(){
