@@ -182,18 +182,56 @@ public class ABB<T extends Comparable<T>> {
     }
 
     public String toString(){
-        throw new UnsupportedOperationException("No implementada aun");
+        if (raiz == null) {
+            return "{}";
+        }
+
+        String res = "{";
+
+        ABB_Iterador it = iterador();
+
+        while (it.haySiguiente()) {
+            T siguiente = it.siguiente(); 
+            
+            if (siguiente.equals(this.minimo())) {
+                res += siguiente;
+            } else {
+                res += "," + siguiente;
+            }
+        }
+
+        res += "}";
+
+        return res;
     }
 
     public class ABB_Iterador {
-        private Nodo _actual;
+        private Nodo actual = recorrerIzquierda(raiz);
 
         public boolean haySiguiente() {            
-            throw new UnsupportedOperationException("No implementada aun");
+            return actual != null;
         }
     
         public T siguiente() {
-            throw new UnsupportedOperationException("No implementada aun");
+            if (actual == null) {
+                return null;
+            }
+
+            T valorADevolver = actual.valor;
+
+            if (actual.der != null) {
+                actual = recorrerIzquierda(actual.der);
+            } else {
+                Nodo hijo = actual;
+                actual = actual.padre;
+
+                while (actual != null && hijo == actual.der) {
+                    hijo = actual;
+                    actual = actual.padre;
+                }
+            }
+
+            return valorADevolver;
         }
     }
 
