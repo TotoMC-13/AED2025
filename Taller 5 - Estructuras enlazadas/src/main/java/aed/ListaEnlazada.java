@@ -108,7 +108,9 @@ public class ListaEnlazada<T> {
 
         if (i == longitud - 1) {
             ultimo = nodoIzquierda;
-        } else if (i == 0) {
+        } 
+        
+        if (i == 0) {
             primero = nodoDerecha;
         }
 
@@ -143,19 +145,22 @@ public class ListaEnlazada<T> {
     @Override
     public String toString() {
         ListaIterador it = this.iterador();
-        String res = "[";
+        StringBuilder sb = new StringBuilder("[");
+        boolean first = true;
 
         while(it.haySiguiente()) {
-            if (res == "["){
-                res += it.siguiente();
+            T val = it.siguiente();
+            if (first) {
+                sb.append(val);
+                first = false;
             } else {
-                res += ", " + it.siguiente();
+                sb.append(", ").append(val);
             }
         }
 
-        res += "]";
+        sb.append("]");
 
-        return res;
+        return sb.toString();
     }
 
     public class ListaIterador{

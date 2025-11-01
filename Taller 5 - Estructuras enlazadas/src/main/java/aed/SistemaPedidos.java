@@ -30,16 +30,33 @@ public class SistemaPedidos {
         if (pedidosPorId.cardinal() == 0) {return null;}
 
         Pedido pedidoMenorId = pedidosPorId.minimo();
-        pedidosPorId.eliminarNodo(pedidoMenorId);
 
         return pedidoMenorId;
     }
 
-    public String obtenerPedidosEnOrdenDeLlegada(){
-        throw new UnsupportedOperationException("No implementado aún");
+    public String obtenerPedidosEnOrdenDeLlegada(){ // ej: [28, 71, 17, 261, 21]
+        ListaEnlazada<ABB<Pedido>.HandleABB>.ListaIterador it = pedidosPorLlegada.iterador();
+        StringBuilder res = new StringBuilder("[");
+        boolean first = true;
+
+        while(it.haySiguiente()) {
+            ABB<Pedido>.HandleABB handle = it.siguiente();
+            Pedido p = handle.valor();
+
+            if (first) {
+                res.append(p);
+                first = false;
+            } else {
+                res.append(", ").append(p);
+            }
+        }
+
+        res.append("]");
+
+        return res.toString();
     }
 
-    public String obtenerPedidosOrdenadosPorId(){
-        throw new UnsupportedOperationException("No implementado aún");
+    public String obtenerPedidosOrdenadosPorId(){ // ej: {17, 21, 28, 71, 261}
+        return pedidosPorId.toString();
     }
 }
